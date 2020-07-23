@@ -4,7 +4,7 @@ The *ASBI Intervention App* is a [SMART on FHIR<sup>&reg;</sup>](https://docs.sm
 2. United States AUDIT (USAUDIT)
 3. National Institute on Substance Abuse (NIDA) Quick Screen
 
-The *ASBI Intervention App* provides implementations of following two intervention CDS, both of which will be published on the [CDS Connect Repository](https://cds.ahrq.gov) in the future:
+The *ASBI Intervention App* provides implementations of following two intervention CDS, both of which have been published on the [CDS Connect Repository](https://cds.ahrq.gov/cdsconnect/artifact_discovery):
 1. Brief Intervention CDS: Provides counseling guidance and prompts for talking with the patient about their alcohol use behaviors.
 2. Decision Aid CDS: Provides a variety of textual and graphical summaries for providing context to the patient's responses to one of the alcohol screening instruments.
 
