@@ -337,7 +337,7 @@ export default {
     if (this.yourDrinking.you.maximum_drinks_per_week.lower == this.yourDrinking.you.maximum_drinks_per_week.upper) {
       this.yourDrinking.you.drinks_per_week = `${this.yourDrinking.you.maximum_drinks_per_week.lower}`;
     } else {
-      this.yourDrinking.you.drinks_per_week = `${this.yourDrinking.you.maximum_drinks_per_week.lower} + ${this.yourDrinking.you.maximum_drinks_per_week.lower}`;
+      this.yourDrinking.you.drinks_per_week = `${this.yourDrinking.you.maximum_drinks_per_week.lower}` + ' - ' + `${this.yourDrinking.you.maximum_drinks_per_week.upper}`;
     }
     this.yourZone = {
       number: decisionAids.your_zone.number,
