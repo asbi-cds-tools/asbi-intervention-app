@@ -30,6 +30,9 @@
     "vue-template-compiler": "^2.6.11",
     "worker-loader": "^2.0.0"
   },
+  "resolutions": {
+    "is-svg": "^4.2.2"
+  },
   "eslintConfig": {
     "root": true,
     "env": {
