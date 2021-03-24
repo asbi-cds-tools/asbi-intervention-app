@@ -1,7 +1,6 @@
 {
   "name": "asbi-intervention-app",
   "version": "1.0.3",
-  "license": "Apache-2.0",
   "description": "A SMART on FHIR application that provides two alcohol intervention CDS for helping to address patient alcohol consumption behaviors.",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -21,7 +20,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",
     "@vue/cli-plugin-eslint": "^4.2.0",
-    "@vue/cli-service": "^4.2.0",
+    "@vue/cli-service": "~4.5.12",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.1.2",
@@ -29,9 +28,6 @@
     "source-map-loader": "^0.2.4",
     "vue-template-compiler": "^2.6.11",
     "worker-loader": "^2.0.0"
-  },
-  "resolutions": {
-    "is-svg": "^4.2.2"
   },
   "eslintConfig": {
     "root": true,
@@ -50,5 +46,10 @@
   "browserslist": [
     "> 0.2%",
     "not dead"
-  ]
+  ],
+  "license": "Apache-2.0",
+  "resolutions": {
+    "is-svg": "^4.2.2",
+    "ssri": "^8.0.1"
+  }
 }
