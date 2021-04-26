@@ -1,8 +1,12 @@
 {
    "library" : {
+      "annotation" : [ {
+         "translatorOptions" : "",
+         "type" : "CqlToElmInfo"
+      } ],
       "identifier" : {
          "id" : "BriefInterventionAndReferralLogicLibrary",
-         "version" : "1.0"
+         "version" : "1.1.0"
       },
       "schemaIdentifier" : {
          "id" : "urn:hl7-org:elm",
@@ -15,14 +19,14 @@
          }, {
             "localIdentifier" : "FHIR",
             "uri" : "http://hl7.org/fhir",
-            "version" : "4.0.0"
+            "version" : "4.0.1"
          } ]
       },
       "includes" : {
          "def" : [ {
             "localIdentifier" : "FHIRHelpers",
             "path" : "FHIRHelpers",
-            "version" : "4.0.0"
+            "version" : "4.0.1"
          } ]
       },
       "codeSystems" : {
@@ -337,6 +341,11 @@
             } ]
          } ]
       },
+      "contexts" : {
+         "def" : [ {
+            "name" : "Patient"
+         } ]
+      },
       "statements" : {
          "def" : [ {
             "name" : "Patient",
@@ -345,6 +354,7 @@
                "type" : "SingletonFrom",
                "operand" : {
                   "dataType" : "{http://hl7.org/fhir}Patient",
+                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Patient",
                   "type" : "Retrieve"
                }
             }
@@ -371,9 +381,14 @@
                   "where" : {
                      "type" : "Equal",
                      "operand" : [ {
-                        "path" : "url",
-                        "scope" : "Ext",
-                        "type" : "Property"
+                        "name" : "ToString",
+                        "libraryName" : "FHIRHelpers",
+                        "type" : "FunctionRef",
+                        "operand" : [ {
+                           "path" : "url",
+                           "scope" : "Ext",
+                           "type" : "Property"
+                        } ]
                      }, {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
                         "value" : "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
@@ -389,16 +404,12 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
+                  "type" : "Not",
                   "operand" : {
-                     "type" : "Not",
+                     "type" : "IsNull",
                      "operand" : {
-                        "type" : "IsNull",
-                        "operand" : {
-                           "name" : "SexAtBirthExtension",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "SexAtBirthExtension",
+                        "type" : "ExpressionRef"
                      }
                   }
                },
@@ -585,14 +596,10 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
+                  "type" : "IsNull",
                   "operand" : {
-                     "type" : "IsNull",
-                     "operand" : {
-                        "name" : "period",
-                        "type" : "OperandRef"
-                     }
+                     "name" : "period",
+                     "type" : "OperandRef"
                   }
                },
                "then" : {
@@ -669,6 +676,7 @@
                   "alias" : "QR",
                   "expression" : {
                      "dataType" : "{http://hl7.org/fhir}QuestionnaireResponse",
+                     "templateId" : "http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse",
                      "type" : "Retrieve"
                   }
                } ],
@@ -953,6 +961,7 @@
                                  }
                               },
                               "return" : {
+                                 "distinct" : false,
                                  "expression" : {
                                     "path" : "value",
                                     "type" : "Property",
@@ -1466,11 +1475,14 @@
                   "alias" : "O",
                   "expression" : {
                      "dataType" : "{http://hl7.org/fhir}Observation",
+                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Observation",
                      "codeProperty" : "code",
+                     "codeComparator" : "~",
                      "type" : "Retrieve",
                      "codes" : {
-                        "type" : "ToList",
-                        "operand" : {
+                        "path" : "codes",
+                        "type" : "Property",
+                        "source" : {
                            "name" : "Alcohol screening codes",
                            "type" : "ConceptRef"
                         }
@@ -1758,50 +1770,38 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
+                  "type" : "Not",
                   "operand" : {
-                     "type" : "Not",
+                     "type" : "IsNull",
                      "operand" : {
-                        "type" : "IsNull",
-                        "operand" : {
-                           "name" : "DateOfMostRecentQuestionnaireResponse",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "DateOfMostRecentQuestionnaireResponse",
+                        "type" : "ExpressionRef"
                      }
                   }
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
+                     "type" : "Not",
                      "operand" : {
-                        "type" : "Not",
+                        "type" : "IsNull",
                         "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "DateOfMostRecentAlcoholScreeningObservation",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "DateOfMostRecentAlcoholScreeningObservation",
+                           "type" : "ExpressionRef"
                         }
                      }
                   },
                   "then" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "SameOrAfter",
-                           "operand" : [ {
-                              "name" : "DateOfMostRecentQuestionnaireResponse",
-                              "type" : "ExpressionRef"
-                           }, {
-                              "name" : "DateOfMostRecentAlcoholScreeningObservation",
-                              "type" : "ExpressionRef"
-                           } ]
-                        }
+                        "type" : "SameOrAfter",
+                        "operand" : [ {
+                           "name" : "DateOfMostRecentQuestionnaireResponse",
+                           "type" : "ExpressionRef"
+                        }, {
+                           "name" : "DateOfMostRecentAlcoholScreeningObservation",
+                           "type" : "ExpressionRef"
+                        } ]
                      },
                      "then" : {
                         "name" : "DateOfMostRecentQuestionnaireResponse",
@@ -1820,16 +1820,12 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
+                     "type" : "Not",
                      "operand" : {
-                        "type" : "Not",
+                        "type" : "IsNull",
                         "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "DateOfMostRecentAlcoholScreeningObservation",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "DateOfMostRecentAlcoholScreeningObservation",
+                           "type" : "ExpressionRef"
                         }
                      }
                   },
@@ -1856,7 +1852,9 @@
                   "alias" : "P",
                   "expression" : {
                      "dataType" : "{http://hl7.org/fhir}Procedure",
+                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Procedure",
                      "codeProperty" : "code",
+                     "codeComparator" : "in",
                      "type" : "Retrieve",
                      "codes" : {
                         "name" : "Alcohol screening intervention",
@@ -1927,11 +1925,14 @@
                   "alias" : "P",
                   "expression" : {
                      "dataType" : "{http://hl7.org/fhir}Observation",
+                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Observation",
                      "codeProperty" : "code",
+                     "codeComparator" : "~",
                      "type" : "Retrieve",
                      "codes" : {
-                        "type" : "ToList",
-                        "operand" : {
+                        "path" : "codes",
+                        "type" : "Property",
+                        "source" : {
                            "name" : "Pregnancy status",
                            "type" : "ConceptRef"
                         }
@@ -2067,7 +2068,9 @@
                      "type" : "Union",
                      "operand" : [ {
                         "dataType" : "{http://hl7.org/fhir}Condition",
+                        "templateId" : "http://hl7.org/fhir/StructureDefinition/Condition",
                         "codeProperty" : "code",
+                        "codeComparator" : "in",
                         "type" : "Retrieve",
                         "codes" : {
                            "name" : "Pregnancy",
@@ -2075,7 +2078,9 @@
                         }
                      }, {
                         "dataType" : "{http://hl7.org/fhir}Condition",
+                        "templateId" : "http://hl7.org/fhir/StructureDefinition/Condition",
                         "codeProperty" : "code",
+                        "codeComparator" : "in",
                         "type" : "Retrieve",
                         "codes" : {
                            "name" : "Pregnancy (New ICD10 codes published in 2018 and 2019)",
@@ -2334,6 +2339,7 @@
                      "alias" : "Q",
                      "expression" : {
                         "dataType" : "{http://hl7.org/fhir}Questionnaire",
+                        "templateId" : "http://hl7.org/fhir/StructureDefinition/Questionnaire",
                         "type" : "Retrieve"
                      }
                   } ],
@@ -2730,12 +2736,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "DisplayNotification",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "DisplayNotification",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -2755,32 +2757,28 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Or",
+                  "type" : "Or",
+                  "operand" : [ {
+                     "type" : "Equal",
                      "operand" : [ {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "MostRecentQuestionnaireURL",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "http://www.cdc.gov/ncbddd/fasd/usaudit",
-                           "type" : "Literal"
-                        } ]
+                        "name" : "MostRecentQuestionnaireURL",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "MostRecentQuestionnaireURL",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "http://www.cdc.gov/ncbddd/fasd/nidaqs2usaudit",
-                           "type" : "Literal"
-                        } ]
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "http://www.cdc.gov/ncbddd/fasd/usaudit",
+                        "type" : "Literal"
                      } ]
-                  }
+                  }, {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "MostRecentQuestionnaireURL",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "http://www.cdc.gov/ncbddd/fasd/nidaqs2usaudit",
+                        "type" : "Literal"
+                     } ]
+                  } ]
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -2790,19 +2788,15 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "MostRecentQuestionnaireURL",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "http://www.cdc.gov/ncbddd/fasd/audit",
-                           "type" : "Literal"
-                        } ]
-                     }
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "MostRecentQuestionnaireURL",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "http://www.cdc.gov/ncbddd/fasd/audit",
+                        "type" : "Literal"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -2825,45 +2819,41 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
+                  "type" : "Or",
+                  "operand" : [ {
                      "type" : "Or",
                      "operand" : [ {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "FemaleAtBirth",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "SexAtBirthUnknown",
-                           "type" : "ExpressionRef"
-                        } ]
+                        "name" : "FemaleAtBirth",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "And",
+                        "name" : "SexAtBirthUnknown",
+                        "type" : "ExpressionRef"
+                     } ]
+                  }, {
+                     "type" : "And",
+                     "operand" : [ {
+                        "name" : "MaleAtBirth",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "type" : "Greater",
                         "operand" : [ {
-                           "name" : "MaleAtBirth",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "type" : "Greater",
-                           "operand" : [ {
-                              "precision" : "Year",
-                              "type" : "CalculateAge",
-                              "operand" : {
-                                 "path" : "birthDate.value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "Patient",
-                                    "type" : "ExpressionRef"
-                                 }
+                           "precision" : "Year",
+                           "type" : "CalculateAge",
+                           "operand" : {
+                              "path" : "birthDate.value",
+                              "type" : "Property",
+                              "source" : {
+                                 "name" : "Patient",
+                                 "type" : "ExpressionRef"
                               }
-                           }, {
-                              "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                              "value" : "65",
-                              "type" : "Literal"
-                           } ]
+                           }
+                        }, {
+                           "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                           "value" : "65",
+                           "type" : "Literal"
                         } ]
                      } ]
-                  }
+                  } ]
                },
                "then" : {
                   "lowClosed" : true,
@@ -2903,45 +2893,41 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
+                  "type" : "Or",
+                  "operand" : [ {
                      "type" : "Or",
                      "operand" : [ {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "FemaleAtBirth",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "SexAtBirthUnknown",
-                           "type" : "ExpressionRef"
-                        } ]
+                        "name" : "FemaleAtBirth",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "And",
+                        "name" : "SexAtBirthUnknown",
+                        "type" : "ExpressionRef"
+                     } ]
+                  }, {
+                     "type" : "And",
+                     "operand" : [ {
+                        "name" : "MaleAtBirth",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "type" : "Greater",
                         "operand" : [ {
-                           "name" : "MaleAtBirth",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "type" : "Greater",
-                           "operand" : [ {
-                              "precision" : "Year",
-                              "type" : "CalculateAge",
-                              "operand" : {
-                                 "path" : "birthDate.value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "Patient",
-                                    "type" : "ExpressionRef"
-                                 }
+                           "precision" : "Year",
+                           "type" : "CalculateAge",
+                           "operand" : {
+                              "path" : "birthDate.value",
+                              "type" : "Property",
+                              "source" : {
+                                 "name" : "Patient",
+                                 "type" : "ExpressionRef"
                               }
-                           }, {
-                              "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                              "value" : "65",
-                              "type" : "Literal"
-                           } ]
+                           }
+                        }, {
+                           "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                           "value" : "65",
+                           "type" : "Literal"
                         } ]
                      } ]
-                  }
+                  } ]
                },
                "then" : {
                   "lowClosed" : true,
@@ -2981,19 +2967,15 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "AuditVariant",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "USAUDIT",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "AuditVariant",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "USAUDIT",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "lowClosed" : true,
@@ -3013,19 +2995,15 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "AuditVariant",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "AUDIT",
-                           "type" : "Literal"
-                        } ]
-                     }
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "AuditVariant",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "AUDIT",
+                        "type" : "Literal"
+                     } ]
                   },
                   "then" : {
                      "lowClosed" : true,
@@ -3064,19 +3042,15 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "AuditVariant",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "USAUDIT",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "AuditVariant",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "USAUDIT",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "lowClosed" : true,
@@ -3096,19 +3070,15 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "AuditVariant",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "AUDIT",
-                           "type" : "Literal"
-                        } ]
-                     }
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "AuditVariant",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "AUDIT",
+                        "type" : "Literal"
+                     } ]
                   },
                   "then" : {
                      "lowClosed" : true,
@@ -3147,107 +3117,78 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "HasRecentScoreFullUsAudit",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "HasRecentScoreFullUsAudit",
+                  "type" : "ExpressionRef"
                },
                "then" : {
-                  "type" : "ToInteger",
-                  "operand" : {
-                     "strict" : false,
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "RecentScoreFullUsAudit",
-                        "type" : "ExpressionRef"
-                     },
-                     "asTypeSpecifier" : {
-                        "name" : "{urn:hl7-org:elm-types:r1}String",
-                        "type" : "NamedTypeSpecifier"
-                     }
-                  }
+                  "name" : "RecentScoreFullUsAudit",
+                  "type" : "ExpressionRef"
                },
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "HasRecentScoreUsAuditC",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "HasRecentScoreUsAuditC",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
-                     "type" : "ToInteger",
-                     "operand" : {
-                        "strict" : false,
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "RecentScoreUsAuditC",
-                           "type" : "ExpressionRef"
-                        },
-                        "asTypeSpecifier" : {
-                           "name" : "{urn:hl7-org:elm-types:r1}String",
-                           "type" : "NamedTypeSpecifier"
-                        }
-                     }
+                     "name" : "RecentScoreUsAuditC",
+                     "type" : "ExpressionRef"
                   },
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "HasRecentScoreFullAudit",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "HasRecentScoreFullAudit",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
-                        "type" : "ToInteger",
-                        "operand" : {
-                           "strict" : false,
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "RecentScoreFullAudit",
-                              "type" : "ExpressionRef"
-                           },
-                           "asTypeSpecifier" : {
-                              "name" : "{urn:hl7-org:elm-types:r1}String",
-                              "type" : "NamedTypeSpecifier"
-                           }
-                        }
+                        "name" : "RecentScoreFullAudit",
+                        "type" : "ExpressionRef"
                      },
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "HasRecentScoreAuditC",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "HasRecentScoreAuditC",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
-                           "type" : "ToInteger",
-                           "operand" : {
-                              "strict" : false,
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "RecentScoreAuditC",
-                                 "type" : "ExpressionRef"
-                              },
-                              "asTypeSpecifier" : {
-                                 "name" : "{urn:hl7-org:elm-types:r1}String",
-                                 "type" : "NamedTypeSpecifier"
-                              }
-                           }
+                           "name" : "RecentScoreAuditC",
+                           "type" : "ExpressionRef"
                         },
                         "else" : {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                           "value" : "0",
-                           "type" : "Literal"
+                           "type" : "As",
+                           "operand" : {
+                              "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                              "value" : "0",
+                              "type" : "Literal"
+                           },
+                           "asTypeSpecifier" : {
+                              "type" : "ChoiceTypeSpecifier",
+                              "choice" : [ {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Boolean",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Time",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}DateTime",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Integer",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{http://hl7.org/fhir}decimal",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Date",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}String",
+                                 "type" : "NamedTypeSpecifier"
+                              }, {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Decimal",
+                                 "type" : "NamedTypeSpecifier"
+                              } ]
+                           }
                         }
                      }
                   }
@@ -3260,8 +3201,12 @@
             "expression" : {
                "type" : "In",
                "operand" : [ {
-                  "name" : "MostRecentScreeningScore",
-                  "type" : "ExpressionRef"
+                  "asType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "type" : "As",
+                  "operand" : {
+                     "name" : "MostRecentScreeningScore",
+                     "type" : "ExpressionRef"
+                  }
                }, {
                   "name" : "ScoreBracketZoneOne",
                   "type" : "ExpressionRef"
@@ -3274,8 +3219,12 @@
             "expression" : {
                "type" : "In",
                "operand" : [ {
-                  "name" : "MostRecentScreeningScore",
-                  "type" : "ExpressionRef"
+                  "asType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "type" : "As",
+                  "operand" : {
+                     "name" : "MostRecentScreeningScore",
+                     "type" : "ExpressionRef"
+                  }
                }, {
                   "name" : "ScoreBracketZoneTwo",
                   "type" : "ExpressionRef"
@@ -3288,8 +3237,12 @@
             "expression" : {
                "type" : "In",
                "operand" : [ {
-                  "name" : "MostRecentScreeningScore",
-                  "type" : "ExpressionRef"
+                  "asType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "type" : "As",
+                  "operand" : {
+                     "name" : "MostRecentScreeningScore",
+                     "type" : "ExpressionRef"
+                  }
                }, {
                   "name" : "ScoreBracketZoneThree",
                   "type" : "ExpressionRef"
@@ -3302,8 +3255,12 @@
             "expression" : {
                "type" : "In",
                "operand" : [ {
-                  "name" : "MostRecentScreeningScore",
-                  "type" : "ExpressionRef"
+                  "asType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "type" : "As",
+                  "operand" : {
+                     "name" : "MostRecentScreeningScore",
+                     "type" : "ExpressionRef"
+                  }
                }, {
                   "name" : "ScoreBracketZoneFour",
                   "type" : "ExpressionRef"
@@ -3316,12 +3273,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "IsZoneOneDrinker",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "IsZoneOneDrinker",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
@@ -3331,12 +3284,8 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "IsZoneTwoDrinker",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "IsZoneTwoDrinker",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
@@ -3346,12 +3295,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneThreeDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneThreeDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
@@ -3361,12 +3306,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneFourDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneFourDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
@@ -3389,12 +3330,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "IsZoneOneDrinker",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "IsZoneOneDrinker",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3404,12 +3341,8 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "IsZoneTwoDrinker",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "IsZoneTwoDrinker",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3419,12 +3352,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneThreeDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneThreeDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3434,12 +3363,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneFourDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneFourDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3494,8 +3419,12 @@
                         "operand" : [ {
                            "type" : "Equal",
                            "operand" : [ {
-                              "name" : "MostRecentScreeningScore",
-                              "type" : "ExpressionRef"
+                              "asType" : "{urn:hl7-org:elm-types:r1}Integer",
+                              "type" : "As",
+                              "operand" : {
+                                 "name" : "MostRecentScreeningScore",
+                                 "type" : "ExpressionRef"
+                              }
                            }, {
                               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
                               "value" : "0",
@@ -3539,12 +3468,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "PregnantAndNotDrinking",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "PregnantAndNotDrinking",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3554,12 +3479,8 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "PregnantAndDrinking",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "PregnantAndDrinking",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3569,12 +3490,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneOneDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneOneDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3584,24 +3501,20 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
+                           "type" : "Or",
+                           "operand" : [ {
                               "type" : "Or",
                               "operand" : [ {
-                                 "type" : "Or",
-                                 "operand" : [ {
-                                    "name" : "IsZoneTwoDrinker",
-                                    "type" : "ExpressionRef"
-                                 }, {
-                                    "name" : "IsZoneThreeDrinker",
-                                    "type" : "ExpressionRef"
-                                 } ]
+                                 "name" : "IsZoneTwoDrinker",
+                                 "type" : "ExpressionRef"
                               }, {
-                                 "name" : "IsZoneFourDrinker",
+                                 "name" : "IsZoneThreeDrinker",
                                  "type" : "ExpressionRef"
                               } ]
-                           }
+                           }, {
+                              "name" : "IsZoneFourDrinker",
+                              "type" : "ExpressionRef"
+                           } ]
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3624,12 +3537,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "PregnantAndNotDrinking",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "PregnantAndNotDrinking",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3647,7 +3556,8 @@
                            "value" : "The patient’s screening score is ",
                            "type" : "Literal"
                         }, {
-                           "type" : "ToString",
+                           "asType" : "{urn:hl7-org:elm-types:r1}String",
+                           "type" : "As",
                            "operand" : {
                               "name" : "MostRecentScreeningScore",
                               "type" : "ExpressionRef"
@@ -3671,12 +3581,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "PregnantAndNotDrinking",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "PregnantAndNotDrinking",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3686,22 +3592,14 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "PregnantAndDrinking",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "PregnantAndDrinking",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneOneDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneOneDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3711,12 +3609,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneTwoDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneTwoDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3726,12 +3620,8 @@
                         "else" : {
                            "type" : "If",
                            "condition" : {
-                              "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "IsZoneThreeDrinker",
-                                 "type" : "ExpressionRef"
-                              }
+                              "name" : "IsZoneThreeDrinker",
+                              "type" : "ExpressionRef"
                            },
                            "then" : {
                               "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3741,12 +3631,8 @@
                            "else" : {
                               "type" : "If",
                               "condition" : {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                 "type" : "As",
-                                 "operand" : {
-                                    "name" : "IsZoneFourDrinker",
-                                    "type" : "ExpressionRef"
-                                 }
+                                 "name" : "IsZoneFourDrinker",
+                                 "type" : "ExpressionRef"
                               },
                               "then" : {
                                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3765,12 +3651,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneOneDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneOneDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3780,12 +3662,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneTwoDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneTwoDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3795,12 +3673,8 @@
                         "else" : {
                            "type" : "If",
                            "condition" : {
-                              "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "IsZoneThreeDrinker",
-                                 "type" : "ExpressionRef"
-                              }
+                              "name" : "IsZoneThreeDrinker",
+                              "type" : "ExpressionRef"
                            },
                            "then" : {
                               "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3810,12 +3684,8 @@
                            "else" : {
                               "type" : "If",
                               "condition" : {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                 "type" : "As",
-                                 "operand" : {
-                                    "name" : "IsZoneFourDrinker",
-                                    "type" : "ExpressionRef"
-                                 }
+                                 "name" : "IsZoneFourDrinker",
+                                 "type" : "ExpressionRef"
                               },
                               "then" : {
                                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3840,12 +3710,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "PregnantAndDrinking",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "PregnantAndDrinking",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3923,22 +3789,14 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "DisplayNotification",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "DisplayNotification",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "PregnantAndNotDrinking",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "PregnantAndNotDrinking",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3948,12 +3806,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3963,12 +3817,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneOneDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneOneDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3978,12 +3828,8 @@
                         "else" : {
                            "type" : "If",
                            "condition" : {
-                              "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "IsZoneTwoDrinker",
-                                 "type" : "ExpressionRef"
-                              }
+                              "name" : "IsZoneTwoDrinker",
+                              "type" : "ExpressionRef"
                            },
                            "then" : {
                               "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -3993,12 +3839,8 @@
                            "else" : {
                               "type" : "If",
                               "condition" : {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                 "type" : "As",
-                                 "operand" : {
-                                    "name" : "IsZoneThreeDrinker",
-                                    "type" : "ExpressionRef"
-                                 }
+                                 "name" : "IsZoneThreeDrinker",
+                                 "type" : "ExpressionRef"
                               },
                               "then" : {
                                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4008,12 +3850,8 @@
                               "else" : {
                                  "type" : "If",
                                  "condition" : {
-                                    "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                    "type" : "As",
-                                    "operand" : {
-                                       "name" : "IsZoneFourDrinker",
-                                       "type" : "ExpressionRef"
-                                    }
+                                    "name" : "IsZoneFourDrinker",
+                                    "type" : "ExpressionRef"
                                  },
                                  "then" : {
                                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4046,12 +3884,8 @@
                "element" : [ {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "PregnantAndDrinking",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "PregnantAndDrinking",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4072,28 +3906,20 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "DisplayNotification",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "DisplayNotification",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4103,12 +3929,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "IsZoneOneDrinker",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "IsZoneOneDrinker",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4118,12 +3940,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneTwoDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneTwoDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4133,12 +3951,8 @@
                         "else" : {
                            "type" : "If",
                            "condition" : {
-                              "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "IsZoneThreeDrinker",
-                                 "type" : "ExpressionRef"
-                              }
+                              "name" : "IsZoneThreeDrinker",
+                              "type" : "ExpressionRef"
                            },
                            "then" : {
                               "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4148,12 +3962,8 @@
                            "else" : {
                               "type" : "If",
                               "condition" : {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                 "type" : "As",
-                                 "operand" : {
-                                    "name" : "IsZoneFourDrinker",
-                                    "type" : "ExpressionRef"
-                                 }
+                                 "name" : "IsZoneFourDrinker",
+                                 "type" : "ExpressionRef"
                               },
                               "then" : {
                                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4183,30 +3993,26 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "And",
+                  "type" : "And",
+                  "operand" : [ {
+                     "name" : "DisplayNotification",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "type" : "Or",
                      "operand" : [ {
-                        "name" : "DisplayNotification",
-                        "type" : "ExpressionRef"
-                     }, {
                         "type" : "Or",
                         "operand" : [ {
-                           "type" : "Or",
-                           "operand" : [ {
-                              "name" : "IsZoneThreeDrinker",
-                              "type" : "ExpressionRef"
-                           }, {
-                              "name" : "IsZoneFourDrinker",
-                              "type" : "ExpressionRef"
-                           } ]
+                           "name" : "IsZoneThreeDrinker",
+                           "type" : "ExpressionRef"
                         }, {
-                           "name" : "PregnantAndDrinking",
+                           "name" : "IsZoneFourDrinker",
                            "type" : "ExpressionRef"
                         } ]
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
                      } ]
-                  }
+                  } ]
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}Boolean",
@@ -4258,22 +4064,14 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "DisplayNotification",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "DisplayNotification",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "name" : "PregnantAndNotDrinking",
-                        "type" : "ExpressionRef"
-                     }
+                     "name" : "PregnantAndNotDrinking",
+                     "type" : "ExpressionRef"
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4283,12 +4081,8 @@
                   "else" : {
                      "type" : "If",
                      "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        }
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
                      },
                      "then" : {
                         "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4298,12 +4092,8 @@
                      "else" : {
                         "type" : "If",
                         "condition" : {
-                           "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                           "type" : "As",
-                           "operand" : {
-                              "name" : "IsZoneOneDrinker",
-                              "type" : "ExpressionRef"
-                           }
+                           "name" : "IsZoneOneDrinker",
+                           "type" : "ExpressionRef"
                         },
                         "then" : {
                            "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4313,12 +4103,8 @@
                         "else" : {
                            "type" : "If",
                            "condition" : {
-                              "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                              "type" : "As",
-                              "operand" : {
-                                 "name" : "IsZoneTwoDrinker",
-                                 "type" : "ExpressionRef"
-                              }
+                              "name" : "IsZoneTwoDrinker",
+                              "type" : "ExpressionRef"
                            },
                            "then" : {
                               "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4328,12 +4114,8 @@
                            "else" : {
                               "type" : "If",
                               "condition" : {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                 "type" : "As",
-                                 "operand" : {
-                                    "name" : "IsZoneThreeDrinker",
-                                    "type" : "ExpressionRef"
-                                 }
+                                 "name" : "IsZoneThreeDrinker",
+                                 "type" : "ExpressionRef"
                               },
                               "then" : {
                                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4343,12 +4125,8 @@
                               "else" : {
                                  "type" : "If",
                                  "condition" : {
-                                    "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                                    "type" : "As",
-                                    "operand" : {
-                                       "name" : "IsZoneFourDrinker",
-                                       "type" : "ExpressionRef"
-                                    }
+                                    "name" : "IsZoneFourDrinker",
+                                    "type" : "ExpressionRef"
                                  },
                                  "then" : {
                                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4379,19 +4157,15 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "MostRecentQuestionnaireURL",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "http://www.cdc.gov/ncbddd/fasd/nidaqs2usaudit",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "MostRecentQuestionnaireURL",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "http://www.cdc.gov/ncbddd/fasd/nidaqs2usaudit",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}Boolean",
@@ -4555,10 +4329,32 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equivalent",
+                  "type" : "Equivalent",
+                  "operand" : [ {
+                     "name" : "ToCode",
+                     "libraryName" : "FHIRHelpers",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "type" : "SingletonFrom",
+                        "operand" : {
+                           "name" : "RecentNidaTobaccoResponse",
+                           "type" : "ExpressionRef"
+                        }
+                     } ]
+                  }, {
+                     "name" : "Never",
+                     "type" : "CodeRef"
+                  } ]
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "did not use",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "type" : "If",
+                  "condition" : {
+                     "type" : "In",
                      "operand" : [ {
                         "name" : "ToCode",
                         "libraryName" : "FHIRHelpers",
@@ -4571,51 +4367,21 @@
                            }
                         } ]
                      }, {
-                        "name" : "Never",
-                        "type" : "CodeRef"
-                     } ]
-                  }
-               },
-               "then" : {
-                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                  "value" : "did not use",
-                  "type" : "Literal"
-               },
-               "else" : {
-                  "type" : "If",
-                  "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "In",
-                        "operand" : [ {
-                           "name" : "ToCode",
-                           "libraryName" : "FHIRHelpers",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "type" : "SingletonFrom",
-                              "operand" : {
-                                 "name" : "RecentNidaTobaccoResponse",
-                                 "type" : "ExpressionRef"
-                              }
-                           } ]
+                        "type" : "List",
+                        "element" : [ {
+                           "name" : "Once or twice",
+                           "type" : "CodeRef"
                         }, {
-                           "type" : "List",
-                           "element" : [ {
-                              "name" : "Once or twice",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Monthly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Weekly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Daily or Almost Daily",
-                              "type" : "CodeRef"
-                           } ]
+                           "name" : "Monthly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Weekly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Daily or Almost Daily",
+                           "type" : "CodeRef"
                         } ]
-                     }
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4636,10 +4402,32 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equivalent",
+                  "type" : "Equivalent",
+                  "operand" : [ {
+                     "name" : "ToCode",
+                     "libraryName" : "FHIRHelpers",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "type" : "SingletonFrom",
+                        "operand" : {
+                           "name" : "RecentNidaRxDrugResponse",
+                           "type" : "ExpressionRef"
+                        }
+                     } ]
+                  }, {
+                     "name" : "Never",
+                     "type" : "CodeRef"
+                  } ]
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "did not use",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "type" : "If",
+                  "condition" : {
+                     "type" : "In",
                      "operand" : [ {
                         "name" : "ToCode",
                         "libraryName" : "FHIRHelpers",
@@ -4652,51 +4440,21 @@
                            }
                         } ]
                      }, {
-                        "name" : "Never",
-                        "type" : "CodeRef"
-                     } ]
-                  }
-               },
-               "then" : {
-                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                  "value" : "did not use",
-                  "type" : "Literal"
-               },
-               "else" : {
-                  "type" : "If",
-                  "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "In",
-                        "operand" : [ {
-                           "name" : "ToCode",
-                           "libraryName" : "FHIRHelpers",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "type" : "SingletonFrom",
-                              "operand" : {
-                                 "name" : "RecentNidaRxDrugResponse",
-                                 "type" : "ExpressionRef"
-                              }
-                           } ]
+                        "type" : "List",
+                        "element" : [ {
+                           "name" : "Once or twice",
+                           "type" : "CodeRef"
                         }, {
-                           "type" : "List",
-                           "element" : [ {
-                              "name" : "Once or twice",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Monthly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Weekly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Daily or Almost Daily",
-                              "type" : "CodeRef"
-                           } ]
+                           "name" : "Monthly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Weekly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Daily or Almost Daily",
+                           "type" : "CodeRef"
                         } ]
-                     }
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4717,10 +4475,32 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equivalent",
+                  "type" : "Equivalent",
+                  "operand" : [ {
+                     "name" : "ToCode",
+                     "libraryName" : "FHIRHelpers",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "type" : "SingletonFrom",
+                        "operand" : {
+                           "name" : "RecentNidaIllegalDrugResponse",
+                           "type" : "ExpressionRef"
+                        }
+                     } ]
+                  }, {
+                     "name" : "Never",
+                     "type" : "CodeRef"
+                  } ]
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "did not use",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "type" : "If",
+                  "condition" : {
+                     "type" : "In",
                      "operand" : [ {
                         "name" : "ToCode",
                         "libraryName" : "FHIRHelpers",
@@ -4733,51 +4513,21 @@
                            }
                         } ]
                      }, {
-                        "name" : "Never",
-                        "type" : "CodeRef"
-                     } ]
-                  }
-               },
-               "then" : {
-                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                  "value" : "did not use",
-                  "type" : "Literal"
-               },
-               "else" : {
-                  "type" : "If",
-                  "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "In",
-                        "operand" : [ {
-                           "name" : "ToCode",
-                           "libraryName" : "FHIRHelpers",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "type" : "SingletonFrom",
-                              "operand" : {
-                                 "name" : "RecentNidaIllegalDrugResponse",
-                                 "type" : "ExpressionRef"
-                              }
-                           } ]
+                        "type" : "List",
+                        "element" : [ {
+                           "name" : "Once or twice",
+                           "type" : "CodeRef"
                         }, {
-                           "type" : "List",
-                           "element" : [ {
-                              "name" : "Once or twice",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Monthly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Weekly",
-                              "type" : "CodeRef"
-                           }, {
-                              "name" : "Daily or Almost Daily",
-                              "type" : "CodeRef"
-                           } ]
+                           "name" : "Monthly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Weekly",
+                           "type" : "CodeRef"
+                        }, {
+                           "name" : "Daily or Almost Daily",
+                           "type" : "CodeRef"
                         } ]
-                     }
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4798,12 +4548,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "NidaQsWasPerformed",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "NidaQsWasPerformed",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "Concatenate",
@@ -4882,35 +4628,27 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "TobaccoDidDidNot",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "used",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "TobaccoDidDidNot",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "used",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4936,35 +4674,27 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "TobaccoDidDidNot",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "used",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "TobaccoDidDidNot",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "used",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -4990,19 +4720,15 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "TobaccoDidDidNot",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "used",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "TobaccoDidDidNot",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "used",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -5022,48 +4748,40 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Or",
+                  "type" : "Or",
+                  "operand" : [ {
+                     "type" : "Equal",
                      "operand" : [ {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "RxDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "name" : "RxDrugDidDidNot",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "IllegalDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
                      } ]
-                  }
+                  }, {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "IllegalDrugDidDidNot",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
+                     } ]
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "type" : "Concatenate",
@@ -5102,35 +4820,27 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "TobaccoDidDidNot",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "used",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "TobaccoDidDidNot",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "used",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "type" : "Concatenate",
@@ -5152,18 +4862,14 @@
                "else" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "type" : "Concatenate",
@@ -5197,12 +4903,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "NidaQsWasPerformed",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "NidaQsWasPerformed",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "Concatenate",
@@ -5234,12 +4936,8 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "NidaQsWasPerformed",
-                     "type" : "ExpressionRef"
-                  }
+                  "name" : "NidaQsWasPerformed",
+                  "type" : "ExpressionRef"
                },
                "then" : {
                   "type" : "Concatenate",
@@ -5271,32 +4969,28 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Or",
+                  "type" : "Or",
+                  "operand" : [ {
+                     "type" : "Equal",
                      "operand" : [ {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "RxDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "name" : "RxDrugDidDidNot",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "IllegalDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
                      } ]
-                  }
+                  }, {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "IllegalDrugDidDidNot",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
+                     } ]
+                  } ]
                },
                "then" : {
                   "valueType" : "{urn:hl7-org:elm-types:r1}Boolean",
@@ -5342,35 +5036,27 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Equal",
-                     "operand" : [ {
-                        "name" : "TobaccoDidDidNot",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                        "value" : "used",
-                        "type" : "Literal"
-                     } ]
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "name" : "TobaccoDidDidNot",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                     "value" : "used",
+                     "type" : "Literal"
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
@@ -5396,48 +5082,40 @@
             "expression" : {
                "type" : "If",
                "condition" : {
-                  "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                  "type" : "As",
-                  "operand" : {
-                     "type" : "Or",
+                  "type" : "Or",
+                  "operand" : [ {
+                     "type" : "Equal",
                      "operand" : [ {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "RxDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "name" : "RxDrugDidDidNot",
+                        "type" : "ExpressionRef"
                      }, {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "name" : "IllegalDrugDidDidNot",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "used",
-                           "type" : "Literal"
-                        } ]
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
                      } ]
-                  }
+                  }, {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "IllegalDrugDidDidNot",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "used",
+                        "type" : "Literal"
+                     } ]
+                  } ]
                },
                "then" : {
                   "type" : "If",
                   "condition" : {
-                     "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                     "type" : "As",
-                     "operand" : {
-                        "type" : "Or",
-                        "operand" : [ {
-                           "name" : "PregnantAndNotDrinking",
-                           "type" : "ExpressionRef"
-                        }, {
-                           "name" : "PregnantAndDrinking",
-                           "type" : "ExpressionRef"
-                        } ]
-                     }
+                     "type" : "Or",
+                     "operand" : [ {
+                        "name" : "PregnantAndNotDrinking",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "PregnantAndDrinking",
+                        "type" : "ExpressionRef"
+                     } ]
                   },
                   "then" : {
                      "valueType" : "{urn:hl7-org:elm-types:r1}String",
