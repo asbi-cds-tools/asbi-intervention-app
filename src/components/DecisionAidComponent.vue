@@ -125,7 +125,8 @@
 <script>
 
 import { getIntervention } from '../util/intervention-selector.js';
-import Worker from '../cql/cql.worker.js'; // https://github.com/webpack-contrib/worker-loader
+import Worker from "../../node_modules/cql-worker/src/cql.worker.js"; // https://github.com/webpack-contrib/worker-loader
+import { initialzieCqlWorker } from 'cql-worker';
 import FHIR from 'fhirclient';
 import {getObservationCategories} from '../util/util.js';
 import marked from 'marked';
@@ -142,75 +143,11 @@ const cqlWorker = new Worker();
 // Assemble the parameters needed by the CQL
 let cqlParameters = {};
 
+// Initialize the cql-worker
+let [setupExecution, sendPatientBundle, evaluateExpression] = initialzieCqlWorker(cqlWorker);
+
 // Send the cqlWorker an initial message containing the ELM JSON representation of the CQL expressions
-cqlWorker.postMessage({elmJson: elmJson, valueSetJson: valueSetJson, parameters: cqlParameters});
-
-// Define an array to keep track of the expression messages sent to the Web Worker
-var messageArray = [
-  {
-    expr: 'PLACEHOLDER', 
-    resolver: {}
-  }
-];
-
-// Define an event handler for when cqlWorker sends results back
-cqlWorker.onmessage = function(event) {
-  // Unpack the message in the event
-  let expression = event.data.expression;
-  let result = event.data.result;
-
-  if (result == 'WAITING_FOR_PATIENT_BUNDLE') {
-    cqlWorker.postMessage({expression: expression});
-  } else {
-    // Try to find this expression in the messageArray
-    let executingExpressionIndex = messageArray.map((msg,idx) => {
-      if (msg.expr == expression) return idx;
-      else return -1; 
-    }).reduce((a,b) => {
-      if (a != -1) return a;
-      else if (b != -1) return b;
-      else return -1});
-
-    // If the expression was found in the messageArray
-    if (executingExpressionIndex != -1) {
-      // Return the result by resolving the promise
-      messageArray[executingExpressionIndex].resolver(result);
-      // Remove the matching entry from the array
-      messageArray.splice(executingExpressionIndex,1);
-    }
-  }
-}
-
-/**
- * Sends an expression to the webworker for evaluation.
- * @param {string} expression - The name of a CQL expression.
- * @returns {boolean} - A dummy return value.
- */
-function evaluateExpression(expression) {
-  // If this expression is already on the message stack, return its index.
-  let executingExpressionIndex = messageArray.map((msg,idx) => {
-    if (msg.expression == expression) return idx;
-    else return -1;
-  }).reduce((a,b) => {
-    if (a != -1) return a;
-    else if (b != -1) return b;
-    else return -1});
-  
-  // If this expression was not found on the stack
-  if (executingExpressionIndex == -1) {
-
-    // Add an entry to the stack
-    let n = messageArray.push({
-      expr: expression, // The name of the expression
-      resolver: null
-    });
-    
-    // Send the entry to the Web Worker
-    cqlWorker.postMessage({expression: expression});
-    // Return a promise that can be resolved after the web worker returns the result
-    return new Promise(resolve => messageArray[n-1].resolver = resolve);
-  }
-}
+setupExecution(elmJson, valueSetJson, cqlParameters);
 
 // Add the Questionnaires to the patient bundle.
 var patientBundle = {
@@ -326,7 +263,7 @@ export default {
     });
 
     // Send the patient bundle to the CQL web worker
-    cqlWorker.postMessage({patientBundle: patientBundle});
+    sendPatientBundle(patientBundle);
 
     // Have the web worker evaluate the CQL and return the brief interventions
     let decisionAids = await evaluateExpression(namedExpression);
