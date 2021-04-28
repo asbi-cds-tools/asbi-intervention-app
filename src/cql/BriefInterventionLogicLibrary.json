@@ -2470,36 +2470,49 @@
                "where" : {
                   "type" : "And",
                   "operand" : [ {
-                     "type" : "Equal",
+                     "type" : "And",
                      "operand" : [ {
-                        "path" : "id",
-                        "scope" : "QT",
-                        "type" : "Property"
+                        "type" : "Equal",
+                        "operand" : [ {
+                           "path" : "id",
+                           "scope" : "QT",
+                           "type" : "Property"
+                        }, {
+                           "path" : "id",
+                           "scope" : "RV",
+                           "type" : "Property"
+                        } ]
                      }, {
-                        "path" : "id",
-                        "scope" : "RV",
-                        "type" : "Property"
+                        "type" : "Not",
+                        "operand" : {
+                           "type" : "IsNull",
+                           "operand" : {
+                              "path" : "display",
+                              "type" : "Property",
+                              "source" : {
+                                 "strict" : false,
+                                 "type" : "As",
+                                 "operand" : {
+                                    "path" : "answer",
+                                    "scope" : "RV",
+                                    "type" : "Property"
+                                 },
+                                 "asTypeSpecifier" : {
+                                    "name" : "{http://hl7.org/fhir}Coding",
+                                    "type" : "NamedTypeSpecifier"
+                                 }
+                              }
+                           }
+                        }
                      } ]
                   }, {
                      "type" : "Not",
                      "operand" : {
                         "type" : "IsNull",
                         "operand" : {
-                           "path" : "display",
-                           "type" : "Property",
-                           "source" : {
-                              "strict" : false,
-                              "type" : "As",
-                              "operand" : {
-                                 "path" : "answer",
-                                 "scope" : "RV",
-                                 "type" : "Property"
-                              },
-                              "asTypeSpecifier" : {
-                                 "name" : "{http://hl7.org/fhir}Coding",
-                                 "type" : "NamedTypeSpecifier"
-                              }
-                           }
+                           "path" : "question",
+                           "scope" : "QT",
+                           "type" : "Property"
                         }
                      }
                   } ]
@@ -3556,11 +3569,18 @@
                            "value" : "The patient’s screening score is ",
                            "type" : "Literal"
                         }, {
-                           "asType" : "{urn:hl7-org:elm-types:r1}String",
-                           "type" : "As",
+                           "type" : "ToString",
                            "operand" : {
-                              "name" : "MostRecentScreeningScore",
-                              "type" : "ExpressionRef"
+                              "strict" : false,
+                              "type" : "As",
+                              "operand" : {
+                                 "name" : "MostRecentScreeningScore",
+                                 "type" : "ExpressionRef"
+                              },
+                              "asTypeSpecifier" : {
+                                 "name" : "{urn:hl7-org:elm-types:r1}Integer",
+                                 "type" : "NamedTypeSpecifier"
+                              }
                            }
                         } ]
                      }, {

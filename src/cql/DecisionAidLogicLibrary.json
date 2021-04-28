@@ -3644,11 +3644,18 @@
                                  "value" : "Your screening score = ",
                                  "type" : "Literal"
                               }, {
-                                 "asType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "type" : "As",
+                                 "type" : "ToString",
                                  "operand" : {
-                                    "name" : "MostRecentScreeningScore",
-                                    "type" : "ExpressionRef"
+                                    "strict" : false,
+                                    "type" : "As",
+                                    "operand" : {
+                                       "name" : "MostRecentScreeningScore",
+                                       "type" : "ExpressionRef"
+                                    },
+                                    "asTypeSpecifier" : {
+                                       "name" : "{urn:hl7-org:elm-types:r1}Integer",
+                                       "type" : "NamedTypeSpecifier"
+                                    }
                                  }
                               } ]
                            }, {
