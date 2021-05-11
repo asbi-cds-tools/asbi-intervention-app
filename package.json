@@ -51,6 +51,8 @@
   "license": "Apache-2.0",
   "resolutions": {
     "is-svg": "^4.2.2",
-    "ssri": "^8.0.1"
+    "ssri": "^8.0.1",
+    "hosted-git-info": "^3.0.8",
+    "lodash": "^4.17.21"
   }
 }
