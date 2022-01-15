@@ -14,7 +14,7 @@
     "cql-execution": "^2.0.0",
     "cql-worker": "file:localDependencies/cql-worker-1.0.2.tgz",
     "fhirclient": "^2.3.11",
-    "marked": "^2.0.0",
+    "marked": "^4.0.10",
     "temp": "^0.9.1",
     "vue": "^2.6.11"
   },
