@@ -70,7 +70,7 @@ import Worker from "../../node_modules/cql-worker/src/cql.worker.js"; // https:/
 import { initialzieCqlWorker } from 'cql-worker';
 import FHIR from 'fhirclient';
 import {getObservationCategories} from '../util/util.js';
-import marked from 'marked';
+import { marked } from 'marked';
 
 // Load the Questionniare, CQL ELM JSON, and value set cache which represents the alcohol intervention
 const [questionnaires, elmJson, valueSetJson, namedExpression] = getIntervention();

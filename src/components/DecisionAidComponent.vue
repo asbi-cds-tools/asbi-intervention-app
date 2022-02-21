@@ -128,8 +128,8 @@ import { getIntervention } from '../util/intervention-selector.js';
 import Worker from "../../node_modules/cql-worker/src/cql.worker.js"; // https://github.com/webpack-contrib/worker-loader
 import { initialzieCqlWorker } from 'cql-worker';
 import FHIR from 'fhirclient';
-import {getObservationCategories} from '../util/util.js';
-import marked from 'marked';
+import { getObservationCategories } from '../util/util.js';
+import { marked } from 'marked';
 
 // Load the Questionniare, CQL ELM JSON, and value set cache which represents the alcohol intervention
 const [questionnaires, elmJson, valueSetJson, namedExpression] = getIntervention();
