@@ -13,7 +13,7 @@ const { Library, Repository } = require('cql-execution');
 const { CodeService } = require('cql-exec-vsac');
 const briefInterventionLogicElm = require('../cql/BriefInterventionLogicLibrary.json');
 const decisionAidLogicElm = require('../cql/DecisionAidLogicLibrary.json');
-const fhirHelpersElm = require('../cql/FHIRHelpers.json');
+const fhirHelpersElm = require('../cql/FHIRHelpers-4.0.1.json');
 
 // First ensure an API key is provided
 let apiKey;
