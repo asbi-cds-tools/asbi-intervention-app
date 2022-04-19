@@ -6,7 +6,7 @@
       } ],
       "identifier" : {
          "id" : "DecisionAidLogicLibrary",
-         "version" : "1.1.0"
+         "version" : "2.0.0"
       },
       "schemaIdentifier" : {
          "id" : "urn:hl7-org:elm",
@@ -180,6 +180,14 @@
             "name" : "WHO AUDIT Total Score code",
             "id" : "75624-7",
             "display" : "WHO AUDIT Total Score",
+            "accessLevel" : "Public",
+            "codeSystem" : {
+               "name" : "LOINC"
+            }
+         }, {
+            "name" : "Sex assigned at birth",
+            "id" : "76689-9",
+            "display" : "Sex assigned at birth",
             "accessLevel" : "Public",
             "codeSystem" : {
                "name" : "LOINC"
@@ -394,6 +402,58 @@
                }
             }
          }, {
+            "name" : "SexAtBirthObservation",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Query",
+               "source" : [ {
+                  "alias" : "S",
+                  "expression" : {
+                     "dataType" : "{http://hl7.org/fhir}Observation",
+                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Observation",
+                     "codeProperty" : "code",
+                     "codeComparator" : "~",
+                     "type" : "Retrieve",
+                     "codes" : {
+                        "type" : "ToList",
+                        "operand" : {
+                           "name" : "Sex assigned at birth",
+                           "type" : "CodeRef"
+                        }
+                     }
+                  }
+               } ],
+               "relationship" : [ ],
+               "where" : {
+                  "type" : "In",
+                  "operand" : [ {
+                     "path" : "value",
+                     "type" : "Property",
+                     "source" : {
+                        "path" : "status",
+                        "scope" : "S",
+                        "type" : "Property"
+                     }
+                  }, {
+                     "type" : "List",
+                     "element" : [ {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "final",
+                        "type" : "Literal"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "corrected",
+                        "type" : "Literal"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                        "value" : "amended",
+                        "type" : "Literal"
+                     } ]
+                  } ]
+               }
+            }
+         }, {
             "name" : "SexAtBirth",
             "context" : "Patient",
             "accessLevel" : "Public",
@@ -424,11 +484,104 @@
                "else" : {
                   "type" : "As",
                   "operand" : {
-                     "path" : "code",
-                     "type" : "Property",
-                     "source" : {
-                        "name" : "Unknown value code",
-                        "type" : "CodeRef"
+                     "type" : "If",
+                     "condition" : {
+                        "type" : "Not",
+                        "operand" : {
+                           "type" : "IsNull",
+                           "operand" : {
+                              "name" : "SexAtBirthObservation",
+                              "type" : "ExpressionRef"
+                           }
+                        }
+                     },
+                     "then" : {
+                        "path" : "value",
+                        "type" : "Property",
+                        "source" : {
+                           "path" : "code",
+                           "type" : "Property",
+                           "source" : {
+                              "type" : "Coalesce",
+                              "operand" : [ {
+                                 "type" : "Flatten",
+                                 "operand" : {
+                                    "type" : "Query",
+                                    "source" : [ {
+                                       "alias" : "$this",
+                                       "expression" : {
+                                          "type" : "Query",
+                                          "source" : [ {
+                                             "alias" : "$this",
+                                             "expression" : {
+                                                "name" : "SexAtBirthObservation",
+                                                "type" : "ExpressionRef"
+                                             }
+                                          } ],
+                                          "where" : {
+                                             "type" : "Not",
+                                             "operand" : {
+                                                "type" : "IsNull",
+                                                "operand" : {
+                                                   "path" : "value",
+                                                   "type" : "Property",
+                                                   "source" : {
+                                                      "name" : "$this",
+                                                      "type" : "AliasRef"
+                                                   }
+                                                }
+                                             }
+                                          },
+                                          "return" : {
+                                             "distinct" : false,
+                                             "expression" : {
+                                                "path" : "value",
+                                                "type" : "Property",
+                                                "source" : {
+                                                   "name" : "$this",
+                                                   "type" : "AliasRef"
+                                                }
+                                             }
+                                          }
+                                       }
+                                    } ],
+                                    "where" : {
+                                       "type" : "Not",
+                                       "operand" : {
+                                          "type" : "IsNull",
+                                          "operand" : {
+                                             "path" : "coding",
+                                             "type" : "Property",
+                                             "source" : {
+                                                "name" : "$this",
+                                                "type" : "AliasRef"
+                                             }
+                                          }
+                                       }
+                                    },
+                                    "return" : {
+                                       "distinct" : false,
+                                       "expression" : {
+                                          "path" : "coding",
+                                          "type" : "Property",
+                                          "source" : {
+                                             "name" : "$this",
+                                             "type" : "AliasRef"
+                                          }
+                                       }
+                                    }
+                                 }
+                              } ]
+                           }
+                        }
+                     },
+                     "else" : {
+                        "path" : "code",
+                        "type" : "Property",
+                        "source" : {
+                           "name" : "Unknown value code",
+                           "type" : "CodeRef"
+                        }
                      }
                   },
                   "asTypeSpecifier" : {
@@ -525,21 +678,47 @@
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "type" : "Equal",
+               "type" : "Or",
                "operand" : [ {
-                  "asType" : "{urn:hl7-org:elm-types:r1}String",
-                  "type" : "As",
-                  "operand" : {
-                     "name" : "SexAtBirth",
-                     "type" : "ExpressionRef"
-                  }
+                  "type" : "Equal",
+                  "operand" : [ {
+                     "asType" : "{urn:hl7-org:elm-types:r1}String",
+                     "type" : "As",
+                     "operand" : {
+                        "name" : "SexAtBirth",
+                        "type" : "ExpressionRef"
+                     }
+                  }, {
+                     "path" : "code",
+                     "type" : "Property",
+                     "source" : {
+                        "name" : "Unknown value code",
+                        "type" : "CodeRef"
+                     }
+                  } ]
                }, {
-                  "path" : "code",
-                  "type" : "Property",
-                  "source" : {
-                     "name" : "Unknown value code",
-                     "type" : "CodeRef"
-                  }
+                  "type" : "And",
+                  "operand" : [ {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "MaleAtBirth",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}Boolean",
+                        "value" : "false",
+                        "type" : "Literal"
+                     } ]
+                  }, {
+                     "type" : "Equal",
+                     "operand" : [ {
+                        "name" : "FemaleAtBirth",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}Boolean",
+                        "value" : "false",
+                        "type" : "Literal"
+                     } ]
+                  } ]
                } ]
             }
          }, {

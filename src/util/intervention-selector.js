@@ -17,11 +17,9 @@ export function getIntervention() {
   ];
 
   if (intervention == 'briefintervention') {
-    let namedExpression = 'BriefInterventions';
-    return [allQuestionnaires, elmJsonBriefIntervention, valueSetJson, namedExpression];
+    return [allQuestionnaires, elmJsonBriefIntervention, valueSetJson];
   } else if (intervention == 'decisionaid') {
-    let namedExpression = 'DecisionAids';
-    return [[], elmJsonDecisionAid, valueSetJson, namedExpression];
+    return [allQuestionnaires, elmJsonDecisionAid, valueSetJson];
   } else {
     throw new Error('Unsupported alcohol intervention has been specified');
   }
